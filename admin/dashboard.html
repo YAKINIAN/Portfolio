@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Yak CMS</title>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.2.0/css/line.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+    <div class="sidebar_logo">
+        <div class="sidebar_badge">Yak</div>
+        <div>
+            <div class="sidebar_title">Portfolio CMS</div>
+            <div class="sidebar_sub">Admin Panel</div>
+        </div>
+    </div>
+    <nav class="sidebar_nav">
+        <div class="nav_item active" data-page="projects">
+            <i class="uil uil-briefcase-alt"></i> Projects
+        </div>
+        <div class="nav_item" onclick="location.href='/'">
+            <i class="uil uil-eye"></i> View Portfolio
+        </div>
+    </nav>
+    <div class="sidebar_footer">
+        <div class="sidebar_user">
+            <div class="user_avatar">A</div>
+            <div>
+                <div class="user_name">Admin</div>
+                <div class="user_role">Administrator</div>
+            </div>
+            <button class="logout_btn" id="logout-btn" title="Logout"><i class="uil uil-sign-out-alt"></i></button>
+        </div>
+    </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+    <div class="topbar">
+        <div>
+            <div class="page_title">Projects <span>Manager</span></div>
+            <div style="font-size:.813rem;margin-top:.15rem">Manage your portfolio projects</div>
+        </div>
+        <div class="topbar_actions">
+            <button class="btn btn-primary" id="add-btn">
+                <i class="uil uil-plus"></i> Add Project
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats" id="stats">
+        <div class="stat_card">
+            <div class="stat_icon red"><i class="uil uil-briefcase-alt"></i></div>
+            <div><div class="stat_value" id="stat-total">0</div><div class="stat_label">Total Projects</div></div>
+        </div>
+        <div class="stat_card">
+            <div class="stat_icon blue"><i class="uil uil-globe"></i></div>
+            <div><div class="stat_value" id="stat-web">0</div><div class="stat_label">Web Projects</div></div>
+        </div>
+        <div class="stat_card">
+            <div class="stat_icon green"><i class="uil uil-mobile-android"></i></div>
+            <div><div class="stat_value" id="stat-app">0</div><div class="stat_label">App Projects</div></div>
+        </div>
+        <div class="stat_card">
+            <div class="stat_icon yellow"><i class="uil uil-swatchbook"></i></div>
+            <div><div class="stat_value" id="stat-design">0</div><div class="stat_label">Design / Engineering</div></div>
+        </div>
+    </div>
+
+    <!-- Projects Table -->
+    <div class="card">
+        <div class="card_header">
+            <div class="card_title">All Projects</div>
+            <input type="text" id="search" placeholder="Search projects..." style="background:var(--body);border:1px solid var(--border);border-radius:.4rem;padding:.4rem .8rem;color:var(--title);font-family:'Poppins',sans-serif;font-size:.813rem;width:200px;">
+        </div>
+        <div class="table_wrap">
+            <table id="projects-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Technologies</th>
+                        <th>Screenshots</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="projects-tbody">
+                    <tr><td colspan="7"><div class="empty_state"><i class="uil uil-spinner-alt"></i>Loading...</div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- Add/Edit Modal -->
+<div class="modal_overlay" id="modal">
+    <div class="modal">
+        <div class="modal_header">
+            <div class="modal_title" id="modal-title">Add Project</div>
+            <button class="modal_close" id="modal-close"><i class="uil uil-times"></i></button>
+        </div>
+        <div class="modal_body">
+            <form id="project-form">
+                <input type="hidden" id="project-id">
+
+                <div class="form_row">
+                    <div class="field">
+                        <label>Title *</label>
+                        <input type="text" id="f-title" placeholder="Project title" required>
+                    </div>
+                    <div class="field">
+                        <label>Category *</label>
+                        <select id="f-category" required>
+                            <option value="">Select category</option>
+                            <option value="web">Web</option>
+                            <option value="app">App</option>
+                            <option value="design">Design</option>
+                            <option value="engineering">Engineering</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Description</label>
+                    <textarea id="f-description" placeholder="Project description..."></textarea>
+                </div>
+
+                <div class="form_row">
+                    <div class="field">
+                        <label>Technologies</label>
+                        <input type="text" id="f-technologies" placeholder="HTML, CSS, JS...">
+                    </div>
+                    <div class="field">
+                        <label>Role</label>
+                        <input type="text" id="f-role" placeholder="Frontend Developer">
+                    </div>
+                </div>
+
+                <div class="form_row">
+                    <div class="field">
+                        <label>Live URL</label>
+                        <input type="url" id="f-url" placeholder="https://...">
+                    </div>
+                    <div class="field">
+                        <label>Created Date</label>
+                        <input type="date" id="f-date">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Screenshots</label>
+                    <div class="upload_zone" id="upload-zone">
+                        <input type="file" id="f-screenshots" accept="image/*" multiple>
+                        <i class="uil uil-image-upload"></i>
+                        <p>Click or drag images here</p>
+                        <span>PNG, JPG, WebP — max 5MB each</span>
+                    </div>
+                    <div class="preview_grid" id="preview-grid"></div>
+                </div>
+            </form>
+        </div>
+        <div class="modal_footer">
+            <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
+            <button class="btn btn-primary" id="modal-save">
+                <i class="uil uil-check"></i> <span id="save-text">Save Project</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Image Viewer -->
+<div class="img_viewer" id="img-viewer">
+    <button class="img_viewer_close" id="img-viewer-close"><i class="uil uil-times"></i></button>
+    <img src="" id="img-viewer-img" alt="">
+</div>
+
+<!-- Toast container -->
+<div class="toast_container" id="toasts"></div>
+
+<script src="dashboard.js"></script>
+</body>
+</html>

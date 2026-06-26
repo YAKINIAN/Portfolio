@@ -5,7 +5,12 @@ const path = require('path');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: [
+        'https://yakinian.github.io', // GitHub Pages
+        'http://localhost:3000'
+    ]
+}));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

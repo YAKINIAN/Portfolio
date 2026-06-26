@@ -1,4 +1,4 @@
-const API = '/api';
+const API = 'https://portfolio-production-a8ef.up.railway.app/api';
 const token = () => localStorage.getItem('cms_token');
 
 // Auth guard

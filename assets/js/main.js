@@ -1,4 +1,6 @@
 /*================ Show Sidebar ========= */
+const API_BASE = 'https://portfolio-production-a8ef.up.railway.app';
+
 
 /*========= SKILLS TAB ======= */
 const tabs = document.querySelectorAll('[data-target]'),
@@ -136,7 +138,7 @@ if (contactForm) {
 
         const data = Object.fromEntries(new FormData(contactForm));
         try {
-            const res = await fetch('/api/contact', {
+            const res = await fetch(`${API_BASE}/api/contact`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -186,7 +188,7 @@ async function loadWorkProjects() {
     const container = document.getElementById('work-container');
     if (!container) return;
     try {
-        const res = await fetch('/api/projects');
+        const res = await fetch(`${API_BASE}/api/projects`);
         if (!res.ok) return;
         const projects = await res.json();
 

@@ -259,7 +259,7 @@
             errorEl.classList.remove('show');
 
             try {
-                const res = await fetch('/api/auth/login', {
+                const res = await fetch('https://portfolio-production-a8ef.up.railway.app/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

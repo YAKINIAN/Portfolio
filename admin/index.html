@@ -245,7 +245,7 @@
 
     <script>
         // Redirect if already logged in
-        if (localStorage.getItem('cms_token')) location.href = '/admin/dashboard.html';
+        if (localStorage.getItem('cms_token')) location.href = 'dashboard.html';
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -270,7 +270,7 @@
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || 'Login failed');
                 localStorage.setItem('cms_token', data.token);
-                location.href = '/admin/dashboard.html';
+                location.href = 'dashboard.html';
             } catch (err) {
                 errorEl.textContent = err.message;
                 errorEl.classList.add('show');

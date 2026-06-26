@@ -2,7 +2,7 @@ const API = 'https://portfolio-production-a8ef.up.railway.app/api';
 const token = () => localStorage.getItem('cms_token');
 
 // Auth guard
-if (!token()) location.href = '/admin/index.html';
+if (!token()) location.href = 'index.html';
 
 // ── Toast ──
 function toast(msg, type = 'success') {
@@ -19,7 +19,7 @@ async function apiFetch(path, opts = {}) {
         ...opts,
         headers: { 'Authorization': `Bearer ${token()}`, ...opts.headers }
     });
-    if (res.status === 401) { localStorage.removeItem('cms_token'); location.href = '/admin/index.html'; }
+    if (res.status === 401) { localStorage.removeItem('cms_token'); location.href = 'index.html'; }
     return res;
 }
 
@@ -236,7 +236,7 @@ document.getElementById('img-viewer').addEventListener('click', e => {
 // ── Logout ──
 document.getElementById('logout-btn').onclick = () => {
     localStorage.removeItem('cms_token');
-    location.href = '/admin/index.html';
+    location.href = 'index.html';
 };
 
 // ── Init ──

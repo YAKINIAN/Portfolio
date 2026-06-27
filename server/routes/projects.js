@@ -1,21 +1,6 @@
 const router = require('express').Router();
 const pool = require('../db');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-const storage = new CloudinaryStorage({
-    cloudinary,
-    params: { folder: 'portfolio', allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'] },
-});
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
 function auth(req, res, next) {
     const token = req.headers.authorization?.split(' ')[1];
@@ -37,14 +22,13 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', auth, upload.any(), async (req, res) => {
-    const { title, category, description, technologies, role, live_url, created_date } = req.body;
-    const screenshots = req.files?.map(f => f.path) || [];
+router.post('/', auth, async (req, res) => {
+    const { title, category, description, technologies, role, live_url, created_date, screenshots, screenshot_ids } = req.body;
     try {
         const result = await pool.query(
-            `INSERT INTO projects (title, category, description, technologies, role, live_url, screenshots, created_date)
-             VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
-            [title, category, description, technologies, role, live_url, screenshots, created_date || new Date()]
+            `INSERT INTO projects (title, category, description, technologies, role, live_url, screenshots, screenshot_ids, created_date)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+            [title, category, description, technologies, role, live_url, screenshots || [], screenshot_ids || [], created_date || new Date()]
         );
         res.json(result.rows[0]);
     } catch (err) {
@@ -52,16 +36,13 @@ router.post('/', auth, upload.any(), async (req, res) => {
     }
 });
 
-router.put('/:id', auth, upload.any(), async (req, res) => {
-    const { title, category, description, technologies, role, live_url, created_date, existing_screenshots } = req.body;
-    const newFiles = req.files?.map(f => f.path) || [];
-    const existing = existing_screenshots ? JSON.parse(existing_screenshots) : [];
-    const screenshots = [...existing, ...newFiles];
+router.put('/:id', auth, async (req, res) => {
+    const { title, category, description, technologies, role, live_url, created_date, screenshots, screenshot_ids } = req.body;
     try {
         const result = await pool.query(
             `UPDATE projects SET title=$1, category=$2, description=$3, technologies=$4,
-             role=$5, live_url=$6, screenshots=$7, created_date=$8 WHERE id=$9 RETURNING *`,
-            [title, category, description, technologies, role, live_url, screenshots, created_date, req.params.id]
+             role=$5, live_url=$6, screenshots=$7, screenshot_ids=$8, created_date=$9 WHERE id=$10 RETURNING *`,
+            [title, category, description, technologies, role, live_url, screenshots || [], screenshot_ids || [], created_date, req.params.id]
         );
         res.json(result.rows[0]);
     } catch (err) {
@@ -71,13 +52,6 @@ router.put('/:id', auth, upload.any(), async (req, res) => {
 
 router.delete('/:id', auth, async (req, res) => {
     try {
-        const proj = await pool.query('SELECT screenshots FROM projects WHERE id=$1', [req.params.id]);
-        const shots = proj.rows[0]?.screenshots || [];
-        // Delete from Cloudinary
-        await Promise.all(shots.map(url => {
-            const publicId = url.split('/').slice(-2).join('/').replace(/\.[^.]+$/, '');
-            return cloudinary.uploader.destroy(publicId);
-        }));
         await pool.query('DELETE FROM projects WHERE id=$1', [req.params.id]);
         res.json({ success: true });
     } catch (err) {

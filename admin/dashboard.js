@@ -27,6 +27,7 @@ async function apiFetch(path, opts = {}) {
 let projects = [];
 let editingId = null;
 let existingScreenshots = [];
+let existingScreenshotIds = [];
 
 // ── Load projects ──
 async function loadProjects() {
@@ -101,6 +102,7 @@ function closeModal() {
     document.getElementById('project-id').value = '';
     document.getElementById('preview-grid').innerHTML = '';
     existingScreenshots = [];
+    existingScreenshotIds = [];
     editingId = null;
 }
 
@@ -115,6 +117,7 @@ function openEdit(id) {
     if (!p) return;
     editingId = id;
     existingScreenshots = p.screenshots || [];
+    existingScreenshotIds = p.screenshot_ids || [];
 
     document.getElementById('project-id').value   = p.id;
     document.getElementById('f-title').value       = p.title;
@@ -139,6 +142,7 @@ function openEdit(id) {
 
 function removeExisting(i) {
     existingScreenshots.splice(i, 1);
+    existingScreenshotIds.splice(i, 1);
     document.getElementById(`existing-${i}`)?.remove();
 }
 
@@ -172,6 +176,21 @@ function renderPreviews(files) {
     });
 }
 
+// ── Cloudinary upload utility ──
+async function uploadImage(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'portfolio_upload');
+    formData.append('folder', 'portfolio/projects');
+    const response = await fetch('https://api.cloudinary.com/v1_1/dobhdywqa/image/upload', {
+        method: 'POST',
+        body: formData
+    });
+    if (!response.ok) throw new Error('Image upload failed');
+    const data = await response.json();
+    return { url: data.secure_url, publicId: data.public_id };
+}
+
 // ── Save ──
 document.getElementById('modal-save').onclick = async () => {
     const saveText = document.getElementById('save-text');
@@ -179,25 +198,41 @@ document.getElementById('modal-save').onclick = async () => {
     const category = document.getElementById('f-category').value;
     if (!title || !category) { toast('Title and category are required', 'error'); return; }
 
-    saveText.textContent = 'Saving...';
-
-    const fd = new FormData();
-    fd.append('title', title);
-    fd.append('category', category);
-    fd.append('description', document.getElementById('f-description').value);
-    fd.append('technologies', document.getElementById('f-technologies').value);
-    fd.append('role', document.getElementById('f-role').value);
-    fd.append('live_url', document.getElementById('f-url').value);
-    fd.append('created_date', document.getElementById('f-date').value);
-
-    if (editingId) fd.append('existing_screenshots', JSON.stringify(existingScreenshots));
-
-    Array.from(fileInput.files).forEach(f => fd.append('screenshots', f));
+    saveText.textContent = 'Uploading...';
 
     try {
+        // Upload new files to Cloudinary
+        const newUploads = await Promise.all(
+            Array.from(fileInput.files).map(f => uploadImage(f))
+        );
+
+        const screenshots = [
+            ...existingScreenshots,
+            ...newUploads.map(u => u.url)
+        ];
+        const screenshot_ids = [
+            ...existingScreenshotIds,
+            ...newUploads.map(u => u.publicId)
+        ];
+
+        saveText.textContent = 'Saving...';
+
+        const payload = {
+            title,
+            category,
+            description: document.getElementById('f-description').value,
+            technologies: document.getElementById('f-technologies').value,
+            role: document.getElementById('f-role').value,
+            live_url: document.getElementById('f-url').value,
+            created_date: document.getElementById('f-date').value,
+            screenshots,
+            screenshot_ids
+        };
+
         const res = await apiFetch(editingId ? `/projects/${editingId}` : '/projects', {
             method: editingId ? 'PUT' : 'POST',
-            body: fd
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
         if (!res.ok) throw new Error((await res.json()).error);
         toast(editingId ? 'Project updated!' : 'Project added!');

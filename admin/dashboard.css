@@ -169,3 +169,49 @@ tr:hover td { background:var(--box2); }
 .img_viewer.open { opacity:1; visibility:visible; }
 .img_viewer img { max-width:90vw; max-height:90vh; border-radius:.5rem; }
 .img_viewer_close { position:absolute; top:1.5rem; right:1.5rem; font-size:2rem; color:#fff; cursor:pointer; background:none; border:none; }
+
+/* ── Mobile Responsiveness ── */
+@media screen and (max-width: 1024px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media screen and (max-width: 768px) {
+    body { flex-direction: column; }
+
+    .sidebar {
+        width: 100%; min-height: unset; height: 60px;
+        flex-direction: row; align-items: center; justify-content: space-between;
+        padding: 0 1.25rem; position: fixed; top: 0; left: 0; right: 0;
+        border-right: none; border-bottom: 1px solid var(--border);
+    }
+    .sidebar_logo { padding: 0; border-bottom: none; flex: 1; }
+    .sidebar_nav, .sidebar_footer { display: none; }
+    .sidebar_mobile_toggle {
+        background: none; border: none; color: var(--title); font-size: 1.4rem;
+        cursor: pointer; display: flex;
+    }
+    .sidebar.nav-open .sidebar_nav {
+        display: flex; flex-direction: column;
+        position: fixed; top: 60px; left: 0; right: 0;
+        background: var(--box); border-bottom: 1px solid var(--border);
+        z-index: 99; padding: .5rem 0;
+    }
+    .sidebar.nav-open .sidebar_footer {
+        display: block;
+        position: fixed; top: auto; bottom: 0; left: 0; right: 0;
+        background: var(--box); border-top: 1px solid var(--border);
+        z-index: 99;
+    }
+
+    .main { margin-left: 0; padding: 1.25rem; padding-top: 76px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .form_row { grid-template-columns: 1fr; }
+    .modal { width: 95vw; }
+    .topbar { flex-direction: column; align-items: flex-start; row-gap: .75rem; }
+}
+
+@media screen and (max-width: 480px) {
+    .stats { grid-template-columns: 1fr; }
+    .card { padding: 1rem; }
+    .modal { width: 100vw; border-radius: 0; }
+}

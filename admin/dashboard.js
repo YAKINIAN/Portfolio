@@ -4,6 +4,17 @@ const token = () => localStorage.getItem('cms_token');
 // Auth guard
 if (!token()) location.href = 'index.html';
 
+// ── Mobile sidebar toggle ──
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const adminSidebar  = document.getElementById('admin-sidebar');
+if (sidebarToggle && adminSidebar) {
+    sidebarToggle.addEventListener('click', () => {
+        adminSidebar.classList.toggle('nav-open');
+        sidebarToggle.querySelector('i').classList.toggle('uil-bars');
+        sidebarToggle.querySelector('i').classList.toggle('uil-times');
+    });
+}
+
 // ── Toast ──
 function toast(msg, type = 'success') {
     const el = document.createElement('div');

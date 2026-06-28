@@ -1,6 +1,24 @@
 /*================ Show Sidebar ========= */
 const API_BASE = 'https://portfolio-production-a8ef.up.railway.app';
 
+/*================ Mobile Nav Toggle ========= */
+const navToggle = document.getElementById('nav-toggle');
+const navMenu   = document.querySelector('.nav_menu');
+if (navToggle && navMenu) {
+    navToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('open');
+        navToggle.querySelector('i').classList.toggle('uil-bars');
+        navToggle.querySelector('i').classList.toggle('uil-times');
+    });
+    // Close menu when a link is clicked
+    document.querySelectorAll('.nav_link').forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('open');
+            navToggle.querySelector('i').className = 'uil uil-bars';
+        });
+    });
+}
+
 
 /*========= SKILLS TAB ======= */
 const tabs = document.querySelectorAll('[data-target]'),

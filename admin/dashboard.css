@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
 :root {
     --skin:   hsl(342, 92%, 46%);
@@ -170,48 +170,112 @@ tr:hover td { background:var(--box2); }
 .img_viewer img { max-width:90vw; max-height:90vh; border-radius:.5rem; }
 .img_viewer_close { position:absolute; top:1.5rem; right:1.5rem; font-size:2rem; color:#fff; cursor:pointer; background:none; border:none; }
 
+
 /* ── Mobile Responsiveness ── */
 @media screen and (max-width: 1024px) {
     .stats { grid-template-columns: repeat(2, 1fr); }
+    .main { padding: 1.5rem; }
 }
 
 @media screen and (max-width: 768px) {
-    body { flex-direction: column; }
+    body { display: block; }
 
     .sidebar {
-        width: 100%; min-height: unset; height: 60px;
-        flex-direction: row; align-items: center; justify-content: space-between;
-        padding: 0 1.25rem; position: fixed; top: 0; left: 0; right: 0;
-        border-right: none; border-bottom: 1px solid var(--border);
-    }
-    .sidebar_logo { padding: 0; border-bottom: none; flex: 1; }
-    .sidebar_nav, .sidebar_footer { display: none; }
-    .sidebar_mobile_toggle {
-        background: none; border: none; color: var(--title); font-size: 1.4rem;
-        cursor: pointer; display: flex;
-    }
-    .sidebar.nav-open .sidebar_nav {
-        display: flex; flex-direction: column;
-        position: fixed; top: 60px; left: 0; right: 0;
-        background: var(--box); border-bottom: 1px solid var(--border);
-        z-index: 99; padding: .5rem 0;
-    }
-    .sidebar.nav-open .sidebar_footer {
-        display: block;
-        position: fixed; top: auto; bottom: 0; left: 0; right: 0;
-        background: var(--box); border-top: 1px solid var(--border);
-        z-index: 99;
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        width: 100%;
+        height: 60px;
+        min-height: unset;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1.25rem;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        z-index: 100;
+        overflow: hidden;
+        transition: height .3s ease;
     }
 
-    .main { margin-left: 0; padding: 1.25rem; padding-top: 76px; }
+    .sidebar.nav-open {
+        height: auto;
+        overflow: visible;
+        flex-direction: column;
+        align-items: stretch;
+        padding-bottom: .5rem;
+    }
+
+    .sidebar_logo {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 0;
+        border-bottom: none;
+        height: 60px;
+        flex-shrink: 0;
+    }
+
+    .sidebar_title,
+    .sidebar_sub { display: none; }
+
+    .sidebar_mobile_toggle {
+        margin-left: auto;
+        background: none;
+        border: none;
+        color: var(--title);
+        font-size: 1.4rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+    }
+
+    .sidebar_nav {
+        display: none;
+        padding: .5rem 0;
+        flex: unset;
+    }
+
+    .sidebar.nav-open .sidebar_nav { display: block; }
+
+    .sidebar_footer {
+        display: none;
+        border-top: 1px solid var(--border);
+        padding: .75rem 1.5rem;
+    }
+
+    .sidebar.nav-open .sidebar_footer { display: block; }
+
+    .main {
+        margin-left: 0;
+        padding: 1.25rem;
+        padding-top: 76px;
+        min-height: 100vh;
+    }
+
     .stats { grid-template-columns: repeat(2, 1fr); }
     .form_row { grid-template-columns: 1fr; }
-    .modal { width: 95vw; }
-    .topbar { flex-direction: column; align-items: flex-start; row-gap: .75rem; }
+
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        row-gap: .75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal {
+        width: 95vw;
+        max-height: 85vh;
+    }
 }
 
 @media screen and (max-width: 480px) {
     .stats { grid-template-columns: 1fr; }
     .card { padding: 1rem; }
-    .modal { width: 100vw; border-radius: 0; }
+    .modal { width: 100vw; max-width: 100%; border-radius: .75rem .75rem 0 0; }
+    .modal_overlay { align-items: flex-end; padding: 0; }
+    .stat_value { font-size: 1.4rem; }
 }

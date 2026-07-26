@@ -121,7 +121,10 @@ function openZoom(index) {
 
 document.querySelector('.pp_slides').addEventListener('click', (e) => {
     if (e.target.classList.contains('pp_slide')) {
-        openZoom(_slides.indexOf(e.target.src));
+        // find by index in the rendered slides, not by src string comparison
+        const allSlides = Array.from(document.querySelectorAll('.pp_slide'));
+        const idx = allSlides.indexOf(e.target);
+        openZoom(idx >= 0 ? idx : 0);
     }
 });
 document.getElementById('zoom-close').addEventListener('click', () =>

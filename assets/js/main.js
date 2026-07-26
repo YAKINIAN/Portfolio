@@ -109,10 +109,19 @@ document.querySelector('.pp_prev').addEventListener('click', () => setSlide(_sli
 document.querySelector('.pp_next').addEventListener('click', () => setSlide(_slideIndex + 1));
 
 // Zoom on slide click
+let _zoomIndex = 0;
+
+function openZoom(index) {
+    _zoomIndex = index;
+    document.getElementById('zoom-img').src = _slides[_zoomIndex];
+    document.getElementById('zoom-overlay').classList.add('open');
+    document.getElementById('zoom-prev').classList.toggle('hidden', _zoomIndex === 0);
+    document.getElementById('zoom-next').classList.toggle('hidden', _zoomIndex === _slides.length - 1);
+}
+
 document.querySelector('.pp_slides').addEventListener('click', (e) => {
     if (e.target.classList.contains('pp_slide')) {
-        document.getElementById('zoom-img').src = e.target.src;
-        document.getElementById('zoom-overlay').classList.add('open');
+        openZoom(_slides.indexOf(e.target.src));
     }
 });
 document.getElementById('zoom-close').addEventListener('click', () =>
@@ -120,6 +129,14 @@ document.getElementById('zoom-close').addEventListener('click', () =>
 document.getElementById('zoom-overlay').addEventListener('click', (e) => {
     if (e.target === document.getElementById('zoom-overlay'))
         document.getElementById('zoom-overlay').classList.remove('open');
+});
+document.getElementById('zoom-prev').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (_zoomIndex > 0) openZoom(_zoomIndex - 1);
+});
+document.getElementById('zoom-next').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (_zoomIndex < _slides.length - 1) openZoom(_zoomIndex + 1);
 });
 
 /*============= Services Modal ============= */

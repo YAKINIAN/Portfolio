@@ -26,7 +26,7 @@ function toast(msg, type = 'success') {
 
 // ── API helpers ──
 async function apiFetch(path, opts = {}) {
-    const res = await fetch(API + path, {
+    const res = await fetch(API + '/api' + path, {
         ...opts,
         headers: { 'Authorization': `Bearer ${token()}`, ...opts.headers }
     });
@@ -42,7 +42,7 @@ let existingScreenshotIds = [];
 
 // ── Load projects ──
 async function loadProjects() {
-    const res = await fetch(API + '/projects');
+    const res = await fetch(API + '/api/projects');
     projects = await res.json();
     renderTable(projects);
     renderStats(projects);
